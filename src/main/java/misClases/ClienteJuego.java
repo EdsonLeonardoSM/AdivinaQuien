@@ -7,7 +7,7 @@ import java.util.List;
 public class ClienteJuego {
     public static void main(String[] args) {
         try {
-            String ip = "192.168.0.159";
+            String ip = "192.168.0.159";//ip de la compu servidor
             Socket socket = new Socket(ip, 12345);
             System.out.println("Conectado al servidor");
 

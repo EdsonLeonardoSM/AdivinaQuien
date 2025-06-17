@@ -34,6 +34,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.Timer;
+import misClases.AudioManager;
 import misClases.ChatConexion;
 import misClases.GeneradorPersonajes;
 import misClases.Personaje;
@@ -51,9 +53,28 @@ public class gameplay extends javax.swing.JFrame {
     private ChatConexion chat;
     private Personaje personajeElegido;
     private List<Personaje> tablero;
+    private Timer temporizador;
+    private int segundosTranscurridos = 0;
+    private JLabel lblTiempo;
 
 // Constructor modificado
 public gameplay(List<Personaje> tableroCompartido,String ipp) {
+    AudioManager audio = new AudioManager();
+    audio.reproducirMusica("/audio/cancion.wav");
+            
+            
+    lblTiempo = new JLabel("Tiempo: 0 s");
+    lblTiempo.setBounds(700, 20, 200, 30);
+    add(lblTiempo);
+
+    temporizador = new Timer(1000, e -> {
+        segundosTranscurridos++;
+        lblTiempo.setText("Tiempo: " + segundosTranscurridos + " s");
+    });
+    temporizador.start();
+    
+    
+    
     this.tablero = tableroCompartido;
     this.ipp=ipp;
     elegirPersonaje(); //  nuevo método al inicio
@@ -61,7 +82,7 @@ public gameplay(List<Personaje> tableroCompartido,String ipp) {
 
     setTitle("Adivina Quién");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    setSize(1040, 680);
+    setSize(1040, 680);//1040,
     setLayout(null);
     setLocationRelativeTo(null); // Centra la ventana en pantalla
     setResizable(!true);
@@ -107,6 +128,7 @@ public gameplay(List<Personaje> tableroCompartido,String ipp) {
 
     add(chatPanel);
     
+
 
     for(Personaje p : this.tablero){
         // Escalar imagen a 64x64
@@ -187,7 +209,6 @@ public gameplay(List<Personaje> tableroCompartido,String ipp) {
     } catch(Exception ex){
         chatArea.append("Error de conexión: " + ex.getMessage() + "\n");
     }
-
 
 
     setVisible(true);
