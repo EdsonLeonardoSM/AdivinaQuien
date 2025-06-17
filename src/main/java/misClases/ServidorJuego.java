@@ -25,7 +25,7 @@ public class ServidorJuego {
             ChatConexion chat = new ChatConexion(socket);
 
             // 4. Abrir ventana de juego
-            pruebas.adivinaquien.gameplay juego = new pruebas.adivinaquien.gameplay(tablero,null);
+            pruebas.adivinaquien.gameplay juego = new pruebas.adivinaquien.gameplay(tablero,"192.168.0.159");
             juego.setChat(chat);
 
         } catch (Exception e) {
