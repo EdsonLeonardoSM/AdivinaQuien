@@ -38,10 +38,10 @@ public class instrucciones extends JFrame {
             "4. gana el primero que acierte el objeto del otro \n \n" + 
             "BUENA SUERTE NENE");
         
-        area.setFont(new Font("Old English Text MT",Font.PLAIN, 45));
+        area.setFont(new Font("Old English Text MT",Font.PLAIN, 38));
         area.setEditable(false);
-        area.setOpaque(false);
-        area.setForeground(Color.BLACK);
+        area.setOpaque(true);
+        area.setForeground(Color.PINK);
         area.setLineWrap(true);
         area.setWrapStyleWord(true);
         
@@ -71,5 +71,8 @@ public class instrucciones extends JFrame {
         setVisible(true);
         
         
+    }
+    public static void main(String[] args) {
+        new instrucciones();
     }
 }

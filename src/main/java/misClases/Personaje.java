@@ -5,33 +5,22 @@
 package misClases;
 
 import javax.swing.ImageIcon;
+import java.io.Serializable;
 
-/**
- *
- * @author Edson Leonardo
- */
-public class Personaje {
-   private String nombre;
-    private ImageIcon imagen;
+public class Personaje implements Serializable {
+    private String nombre;
+    private String rutaImagen; // solo guardamos el nombre o ruta
 
-    public Personaje(String nombre, String rutaImagen) {
-        this.nombre = nombre;
+public Personaje(String nombre, String rutaImagen) {
+    this.nombre = nombre;
+    this.rutaImagen = "/imagenes/" + rutaImagen;
+}
 
-        // Cargar imagen como recurso del classpath
-        var url = getClass().getClassLoader().getResource(rutaImagen);
-        if (url != null) {
-            this.imagen = new ImageIcon(url);
-        } else {
-            System.out.println("No se encontró la imagen: " + rutaImagen);
-            this.imagen = new ImageIcon(); // imagen vacía
-        }
-    }
+    public String getNombre() { return nombre; }
 
-    public String getNombre() {
-        return nombre;
-    }
+    public String getRutaImagen() { return rutaImagen; }
 
     public ImageIcon getImagen() {
-        return imagen;
+        return new ImageIcon(getClass().getResource(rutaImagen)); // carga local
     }
 }
