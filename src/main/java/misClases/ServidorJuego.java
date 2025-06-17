@@ -7,7 +7,7 @@ import java.util.List;
 public class ServidorJuego {
     public static void main(String[] args) {
         try {
-            ServerSocket servidor = new ServerSocket(12345);
+            ServerSocket servidor = new ServerSocket(54321);
             System.out.println("Servidor esperando conexión...");
 
             Socket socket = servidor.accept();
@@ -25,7 +25,7 @@ public class ServidorJuego {
             ChatConexion chat = new ChatConexion(socket);
 
             // 4. Abrir ventana de juego
-            pruebas.adivinaquien.gameplay juego = new pruebas.adivinaquien.gameplay(tablero,"192.168.0.159");//ip de la compu servidor
+            pruebas.adivinaquien.gameplay juego = new pruebas.adivinaquien.gameplay(tablero, "192.168.0.159", true); // true = servidor
             juego.setChat(chat);
 
         } catch (Exception e) {

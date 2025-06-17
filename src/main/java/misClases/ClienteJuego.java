@@ -8,7 +8,7 @@ public class ClienteJuego {
     public static void main(String[] args) {
         try {
             String ip = "192.168.0.159";//ip de la compu servidor
-            Socket socket = new Socket(ip, 12345);
+            Socket socket = new Socket(ip, 54321);
             System.out.println("Conectado al servidor");
 
             // 1. Recibir tablero del servidor
@@ -19,7 +19,7 @@ public class ClienteJuego {
             ChatConexion chat = new ChatConexion(socket);
 
             // 3. Abrir ventana de juego
-            pruebas.adivinaquien.gameplay juego = new pruebas.adivinaquien.gameplay(tablero,ip);
+            pruebas.adivinaquien.gameplay juego = new pruebas.adivinaquien.gameplay(tablero, ip, false); // false = cliente
             juego.setChat(chat);
 
         } catch (Exception e) {

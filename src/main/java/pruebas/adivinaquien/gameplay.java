@@ -15,6 +15,8 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.color.ColorSpace;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.net.ServerSocket;
@@ -56,13 +58,37 @@ public class gameplay extends javax.swing.JFrame {
     private Timer temporizador;
     private int segundosTranscurridos = 0;
     private JLabel lblTiempo;
+    private JLabel lblPersonajeElegido;
+    private String personajeOponenteNombre = null;
+    private boolean soyServidor; // Nueva propiedad
 
-// Constructor modificado
-public gameplay(List<Personaje> tableroCompartido,String ipp) {
+public gameplay(List<Personaje> tableroCompartido, String ipp, boolean soyServidor) {
+    this.tablero = tablero;
+    this.soyServidor = soyServidor;
+    this.tablero = tableroCompartido;
+    this.ipp=ipp;
+    initComponents(); 
+    lblPersonajeElegido = new JLabel("Sin personaje");
+    lblPersonajeElegido.setBounds(720, 50, 250, 270); // Ajusta posición y tamaño si es necesario
+    lblPersonajeElegido.setHorizontalAlignment(SwingConstants.CENTER);
+    lblPersonajeElegido.setVerticalAlignment(SwingConstants.BOTTOM);
+    lblPersonajeElegido.setOpaque(true);
+    lblPersonajeElegido.setBackground(Color.WHITE);
+    lblPersonajeElegido.setBorder(BorderFactory.createTitledBorder("Tu personaje"));
+    add(lblPersonajeElegido); // <- IMPORTANTE: Añadirlo al JFrame
+
+
+   
     AudioManager audio = new AudioManager();
     audio.reproducirMusica("/audio/cancion.wav");
-            
-            
+      //esto es cuando cierras la ventana cierra la conexion pero peta      
+    addWindowListener(new WindowAdapter() {
+    @Override
+    public void windowClosing(WindowEvent e) {
+        if (chat != null) chat.cerrar();
+        System.exit(0);
+    }
+}); 
     lblTiempo = new JLabel("Tiempo: 0 s");
     lblTiempo.setBounds(700, 20, 200, 30);
     add(lblTiempo);
@@ -73,19 +99,13 @@ public gameplay(List<Personaje> tableroCompartido,String ipp) {
     });
     temporizador.start();
     
-    
-    
-    this.tablero = tableroCompartido;
-    this.ipp=ipp;
-    elegirPersonaje(); //  nuevo método al inicio
-    initComponents();  // el resto sigue igual
-
     setTitle("Adivina Quién");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setSize(1040, 680);//1040,
     setLayout(null);
     setLocationRelativeTo(null); // Centra la ventana en pantalla
     setResizable(!true);
+    
 
     // Medidas del panel
     int panelWidth = (int)(1040 * 5.0 / 8);  // 600
@@ -103,7 +123,7 @@ public gameplay(List<Personaje> tableroCompartido,String ipp) {
     //panel lateral chat
     JPanel chatPanel = new JPanel();
     chatPanel.setLayout(new BorderLayout());
-    chatPanel.setBounds(695, 50, 300, 580); 
+    chatPanel.setBounds(695, 330, 300, 290); 
     chatPanel.setBackground(Color.LIGHT_GRAY);
 
     chatArea = new JTextArea();
@@ -148,7 +168,39 @@ public gameplay(List<Personaje> tableroCompartido,String ipp) {
         btnAdivinar.setBackground(Color.BLUE);
         btnAdivinar.setForeground(Color.WHITE);
         btnAdivinar.setFont(new Font("Arial", Font.PLAIN, 9));
+        btnAdivinar.addActionListener(e -> {
+                if (personajeOponenteNombre == null) {
+                    JOptionPane.showMessageDialog(this, 
+                        "Aún no se ha recibido el personaje del oponente.",
+                        "Espera", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
 
+                String personajeSeleccionado = p.getNombre(); // El nombre que el jugador intenta adivinar
+
+                if (personajeSeleccionado.equals(personajeOponenteNombre)) {
+                    JOptionPane.showMessageDialog(this, "🎉 ¡Adivinaste el personaje del oponente!",
+                        "¡Victoria!", JOptionPane.INFORMATION_MESSAGE);
+
+                    // Notificar al oponente que perdió
+                    if (chat != null) {
+                        chat.enviarMensaje("[GANASTE]");
+                    }
+                    new ganaste().setVisible(true);
+                     chat.cerrar();
+                    dispose();
+                    // Puedes terminar el juego aquí o mostrar otra ventana
+                } else {
+                    JOptionPane.showMessageDialog(this, "❌ Ese no es el personaje correcto.",
+                        "Intenta de nuevo", JOptionPane.ERROR_MESSAGE);
+
+                    // Notificar al oponente que intentaron adivinar y fallaron
+                    if (chat != null) {
+                        chat.enviarMensaje("[FALLO]");
+                    }
+                }
+            
+        });
         JButton btnDescartar = new JButton("Descartar");
         btnDescartar.setBackground(Color.RED);
         btnDescartar.setForeground(Color.WHITE);
@@ -189,27 +241,26 @@ public gameplay(List<Personaje> tableroCompartido,String ipp) {
         
         jPanel2.add(contenedor);
     }   
-    String[] opciones = {"Servidor", "Cliente"};
-    int eleccion = JOptionPane.showOptionDialog(this, "¿Modo de conexión?", "Chat LAN",
-            JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, opciones, opciones[0]);
-
     try {
-        if(eleccion == 0){ // Servidor
+        if (soyServidor) {
             ServerSocket server = new ServerSocket(12345);
             chatArea.append("Esperando conexión...\n");
             Socket socket = server.accept();
             chatArea.append("Conectado con: " + socket.getInetAddress() + "\n");
             chat = new ChatConexion(socket);
-        } else { // Cliente
+            setChat(chat); 
+        } else {
             Socket socket = new Socket(ipp, 12345);
             chatArea.append("Conectado al servidor\n");
             chat = new ChatConexion(socket);
+            setChat(chat); 
         }
-        chat.recibirMensajes(chatArea);
+                    // 1️⃣ Primero
+        chat.recibirMensajes(chatArea);   // 2️⃣ Segundo: empieza a recibir
+        elegirPersonaje();    
     } catch(Exception ex){
         chatArea.append("Error de conexión: " + ex.getMessage() + "\n");
     }
-
 
     setVisible(true);
     }
@@ -221,7 +272,6 @@ public gameplay(List<Personaje> tableroCompartido,String ipp) {
     dialogo.setSize(800, 600);
     dialogo.setLayout(new GridLayout(4, 6, 10, 10));
     dialogo.getContentPane().setBackground(Color.DARK_GRAY);
-
     for (Personaje p : tablero) {
         ImageIcon icon = new ImageIcon(p.getImagen().getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH));
         JButton boton = new JButton(p.getNombre(), icon);
@@ -230,10 +280,20 @@ public gameplay(List<Personaje> tableroCompartido,String ipp) {
         boton.setForeground(Color.WHITE);
         boton.setBackground(Color.GRAY);
         boton.setFont(new Font("Arial", Font.BOLD, 10));
+        
         boton.addActionListener(e -> {
             personajeElegido = p;
+
+            // Mostrar imagen en lblPersonajeElegido
+            Image img = p.getImagen().getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+            lblPersonajeElegido.setIcon(new ImageIcon(img));
+            lblPersonajeElegido.setText(p.getNombre());
+
             JOptionPane.showMessageDialog(dialogo, "Elegiste: " + p.getNombre());
             dialogo.dispose();
+            if (chat != null) {
+                chat.enviarMensaje("[PERSONAJE]:" + personajeElegido.getNombre());
+            }
         });
         dialogo.add(boton);
     }
@@ -244,7 +304,14 @@ public gameplay(List<Personaje> tableroCompartido,String ipp) {
 public void setChat(ChatConexion chat){
     this.chat = chat;
     chat.recibirMensajes(chatArea);
+
+    // Este bloque se ejecutará cuando se reciba el personaje del oponente
+    chat.onPersonajeRecibido = (String nombrePersonaje) -> {
+        this.personajeOponenteNombre = nombrePersonaje;
+        System.out.println("Personaje del oponente recibido: " + nombrePersonaje); // Solo para verificar
+    };
 }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -286,8 +353,8 @@ public void setChat(ChatConexion chat){
     
 public static void main(String[] args) {
     List<Personaje> tableroCompartido = GeneradorPersonajes.obtenerPersonajesAleatorios();
-    new gameplay(tableroCompartido,ipp).setVisible(true); // Jugador 1
-    // new gameplay(tableroCompartido).setVisible(true); // Jugador 2 (en otra instancia)
+    new gameplay(tableroCompartido, "127.0.0.1", true).setVisible(true);  // Jugador 1
+    // new gameplay(tableroCompartido, "127.0.0.1", false).setVisible(true); // Jugador 2
 }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
