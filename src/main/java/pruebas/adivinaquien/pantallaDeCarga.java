@@ -8,8 +8,9 @@ import java.awt.*;
  * @author Alonso
  */
 public class pantallaDeCarga extends JFrame{
-    
-    public pantallaDeCarga(){
+    private String nombreJugador;
+    public pantallaDeCarga(String nombreJugador){
+        this.nombreJugador=nombreJugador;
         setTitle("esperando coneXion... ");
         setSize(960,600);
         setLocationRelativeTo(null);

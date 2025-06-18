@@ -3,13 +3,19 @@ package misClases;
 import java.io.*;
 import java.net.*;
 import java.util.List;
+import pruebas.adivinaquien.pantallaDeCarga;
+import pruebas.adivinaquien.gameplay;
 
 public class ClienteJuego {
-    public static void main(String[] args) {
+
+    public ClienteJuego(String nombreJugador) {
         try {
-            String ip = "192.168.0.159";//ip de la compu servidor
+            String ip = "192.168.0.159"; // IP del servidor
             Socket socket = new Socket(ip, 54321);
             System.out.println("Conectado al servidor");
+
+            // (Opcional) Mostrar pantalla de carga
+            //new pantallaDeCarga(nombreJugador).setVisible(true);
 
             // 1. Recibir tablero del servidor
             ObjectInputStream inObj = new ObjectInputStream(socket.getInputStream());
@@ -19,7 +25,7 @@ public class ClienteJuego {
             ChatConexion chat = new ChatConexion(socket);
 
             // 3. Abrir ventana de juego
-            pruebas.adivinaquien.gameplay juego = new pruebas.adivinaquien.gameplay(tablero, ip, false); // false = cliente
+            gameplay juego = new gameplay(tablero, ip, false,nombreJugador); // false = cliente
             juego.setChat(chat);
 
         } catch (Exception e) {

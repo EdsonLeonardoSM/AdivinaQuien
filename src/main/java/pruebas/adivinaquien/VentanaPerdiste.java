@@ -50,12 +50,12 @@ public class VentanaPerdiste extends JFrame{
 
         botonReinicar.addActionListener(e -> {
             dispose();
-            new pantallaDeCarga().setVisible(true);
+            new PantallaUsuario().setVisible(true);
         });
         
         botonMenu.addActionListener(e -> {
             dispose();
-            new pantallaDeCarga().setVisible(true);
+            new PantallaUsuario().setVisible(true);
         });
         
         panelBotones.add(botonReinicar);

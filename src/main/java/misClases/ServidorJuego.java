@@ -3,12 +3,20 @@ package misClases;
 import java.io.*;
 import java.net.*;
 import java.util.List;
+import pruebas.adivinaquien.pantallaDeCarga;
+import pruebas.adivinaquien.gameplay;
 
 public class ServidorJuego {
-    public static void main(String[] args) {
+
+
+    public ServidorJuego(String nombreJugador) {
+
         try {
             ServerSocket servidor = new ServerSocket(54321);
-            System.out.println("Servidor esperando conexión...");
+            System.out.println("Esperando conexión del cliente...");
+            
+            // Pantalla de carga puede usar nombre
+            //new pantallaDeCarga(nombreJugador).setVisible(true);
 
             Socket socket = servidor.accept();
             System.out.println("Cliente conectado: " + socket.getInetAddress());
@@ -25,11 +33,11 @@ public class ServidorJuego {
             ChatConexion chat = new ChatConexion(socket);
 
             // 4. Abrir ventana de juego
-            pruebas.adivinaquien.gameplay juego = new pruebas.adivinaquien.gameplay(tablero, "192.168.0.159", true); // true = servidor
+            gameplay juego = new gameplay(tablero, socket.getInetAddress().getHostAddress(), true, nombreJugador); // true = soy servidor
             juego.setChat(chat);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            System.err.println("Error al iniciar servidor: " + e.getMessage());
         }
     }
 }

@@ -33,7 +33,8 @@ public class menuPrueba extends JFrame {
             }
             
             if(texto.equals("Jugar")){
-               boton.addActionListener(e -> new pantallaDeCarga().setVisible(true));
+               boton.addActionListener(e -> new PantallaUsuario().setVisible(true));
+               dispose();
             }
             
             if(texto.equals("instrucciones")){

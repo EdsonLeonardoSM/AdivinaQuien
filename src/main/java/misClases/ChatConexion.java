@@ -18,6 +18,11 @@ public class ChatConexion {
     private BufferedReader entrada;
     private PrintWriter salida;
     public Consumer<String> onPersonajeRecibido;
+    public Consumer<String> onNombreRecibido; // ✅ NUEVO
+    private String nombreLocal = "Tú";
+    private String nombreRemoto = "Otro";
+    private Runnable onDerrota;
+    
     public ChatConexion(Socket socket){
         try {
             this.socket = socket;
@@ -27,44 +32,61 @@ public class ChatConexion {
             e.printStackTrace();
         }
     }
-
-        public void recibirMensajes(JTextArea areaMensajes){
-            new Thread(() -> {
-                String msg;
-                try {
-                    while((msg = entrada.readLine()) != null){
-                        if (msg.startsWith("[PERSONAJE]:")) {
-                            String nombre = msg.substring(12);
-                            if (onPersonajeRecibido != null) {
-                                onPersonajeRecibido.accept(nombre);
-                            }
-                            continue;
-                        }
-
-                        // Adivinó mal
-                        if (msg.equals("[FALLO]")) {
-                            JOptionPane.showMessageDialog(null, 
-                                "⚠️ El oponente intentó adivinar tu personaje pero falló.",
-                                "¡A salvo!", JOptionPane.WARNING_MESSAGE);
-                            continue;
-                        }
-
-                        // Adivinó bien
-                        if (msg.equals("[GANASTE]")) {
-                            JOptionPane.showMessageDialog(null, 
-                                "😞 El oponente adivinó tu personaje. ¡Perdiste!",
-                                "Derrota", JOptionPane.ERROR_MESSAGE);
-                            // bloquear botones o terminar el juego
-                            continue;
-                        }
-
-                        areaMensajes.append("Otro: " + msg + "\n");
-                    }
-                } catch(IOException e){
-                    areaMensajes.append("Conexión cerrada.\n");
-                }
-            }).start();
+    
+    
+    public void setNombres(String nombreLocal, String nombreRemoto) {
+        this.nombreLocal = nombreLocal;
+        this.nombreRemoto = nombreRemoto;
+    }
+        public void setOnDerrota(Runnable r) {
+            this.onDerrota = r;
         }
+      public void recibirMensajes(JTextArea areaMensajes){
+        new Thread(() -> {
+            String msg;
+            try {
+                while((msg = entrada.readLine()) != null){
+                    if (msg.startsWith("[PERSONAJE]:")) {
+                        String nombre = msg.substring(12);
+                        if (onPersonajeRecibido != null) {
+                            onPersonajeRecibido.accept(nombre);
+                        }
+                        continue;
+                    }
+
+                    if (msg.startsWith("[NOMBRE]:")) { // ✅ NUEVO
+                        String nombre = msg.substring(9);
+                        if (onNombreRecibido != null) {
+                            onNombreRecibido.accept(nombre);
+                        }
+                        continue;
+                    }
+
+                    if (msg.equals("[FALLO]")) {
+                        JOptionPane.showMessageDialog(null, 
+                            "️El oponente intentó adivinar tu personaje pero falló.",
+                            "¡A salvo!", JOptionPane.WARNING_MESSAGE);
+                        continue;
+                    }
+
+                    if (msg.equals("[GANASTE]")) {
+                        JOptionPane.showMessageDialog(null, 
+                            "El oponente adivinó tu personaje. ¡Perdiste!",
+                            "Derrota", JOptionPane.ERROR_MESSAGE);
+                        if (onDerrota != null) {
+                            onDerrota.run(); // Detiene el timer o lo que tú definas
+                        }
+                        continue;
+                    }
+
+                    areaMensajes.append(nombreRemoto + ": " + msg + "\n");                
+                }
+            } catch(IOException e){
+                areaMensajes.append("Conexión cerrada.\n");
+            }
+        }).start();
+    }
+
 
 
     public void enviarMensaje(String msg){
