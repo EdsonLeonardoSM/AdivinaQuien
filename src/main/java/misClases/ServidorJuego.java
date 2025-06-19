@@ -10,30 +10,33 @@ public class ServidorJuego {
 
 
     public ServidorJuego(String nombreJugador) {
-
         try {
             ServerSocket servidor = new ServerSocket(54321);
-            System.out.println("Esperando conexión del cliente...");
-            
-            // Pantalla de carga puede usar nombre
-            //new pantallaDeCarga(nombreJugador).setVisible(true);
 
+            // 1. Mostrar pantalla de carga y guardarla en una variable
+            pantallaDeCarga pantalla = new pantallaDeCarga(nombreJugador);
+            pantalla.setVisible(true);
+
+            // 2. Esperar conexión
             Socket socket = servidor.accept();
             System.out.println("Cliente conectado: " + socket.getInetAddress());
 
-            // 1. Generar tablero
+            // 🔴 3. Cerrar pantalla de carga al conectar
+            pantalla.dispose();  // Esto la cierra
+
+            // 4. Generar tablero
             List<Personaje> tablero = GeneradorPersonajes.obtenerPersonajesAleatorios();
 
-            // 2. Enviar tablero al cliente
+            // 5. Enviar tablero al cliente
             ObjectOutputStream outObj = new ObjectOutputStream(socket.getOutputStream());
             outObj.writeObject(tablero);
             outObj.flush();
 
-            // 3. Crear conexión de chat
+            // 6. Crear conexión de chat
             ChatConexion chat = new ChatConexion(socket);
 
-            // 4. Abrir ventana de juego
-            gameplay juego = new gameplay(tablero, socket.getInetAddress().getHostAddress(), true, nombreJugador); // true = soy servidor
+            // 7. Abrir juego
+            gameplay juego = new gameplay(tablero, socket.getInetAddress().getHostAddress(), true, nombreJugador);
             juego.setChat(chat);
 
         } catch (IOException e) {

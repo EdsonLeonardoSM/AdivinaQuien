@@ -15,7 +15,7 @@ import java.io.*;
 public class VentanaPerdiste extends JFrame{
     private JLabel titulo;
     
-    public VentanaPerdiste(){
+    public VentanaPerdiste(int duracion){
         setTitle("no vales bertha");
         setSize(960,600);
         setLocationRelativeTo(null);
@@ -92,6 +92,6 @@ public class VentanaPerdiste extends JFrame{
     }
     
     public static void main(String[] args){
-        new VentanaPerdiste();
+        new VentanaPerdiste(20);//para pruBAS
     }
 }

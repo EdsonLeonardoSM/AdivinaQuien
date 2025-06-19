@@ -18,15 +18,12 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.color.ColorSpace;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import javax.sound.sampled.Clip;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -68,7 +65,7 @@ public class gameplay extends javax.swing.JFrame {
     private JLabel lblTiempo;
     private JLabel lblPersonajeElegido;
     private String personajeOponenteNombre = null;
-    private boolean soyServidor; // Nueva propiedad
+    private boolean soyServidor; 
     private String nombreJugador;
     private String nombreOponente;
     private int duracion;
@@ -96,7 +93,22 @@ public gameplay(List<Personaje> tableroCompartido, String ipp, boolean soyServid
    
     AudioManager audio = new AudioManager();
     audio.reproducirMusica("/audio/cancion.wav");
-         
+
+        JButton btnMusica = new JButton("⏸ Música");
+    btnMusica.setBounds(20, 20, 120, 30); // Ajusta posición y tamaño como desees
+    btnMusica.setFocusPainted(false);
+
+    btnMusica.addActionListener(e -> {
+        if (audioClipReproduciendo(audio)) {
+            audio.pausarMusica();
+            btnMusica.setText("▶ Música");
+        } else {
+            audio.reanudarMusica();
+            btnMusica.setText("⏸ Música");
+        }
+    });
+
+    add(btnMusica);   
 
     lblTiempo = new JLabel("Tiempo: 0 s");
     lblTiempo.setBounds(700, 20, 200, 30);
@@ -141,6 +153,12 @@ public gameplay(List<Personaje> tableroCompartido, String ipp, boolean soyServid
     chatArea.setWrapStyleWord(true);
     chatArea.setFont(new Font("Arial", Font.PLAIN, 12));
     JScrollPane scroll = new JScrollPane(chatArea);
+//Para que se vea el nombre del jugador
+    JLabel lblNombreJugador = new JLabel("Jugador: " + nombreJugador, SwingConstants.CENTER);
+    lblNombreJugador.setFont(new Font("Arial", Font.BOLD, 14));
+    lblNombreJugador.setForeground(Color.BLACK);
+    chatPanel.add(lblNombreJugador, BorderLayout.NORTH);
+
 
     chatInput = new JTextField();
     chatInput.addActionListener(e -> {
@@ -153,11 +171,34 @@ public gameplay(List<Personaje> tableroCompartido, String ipp, boolean soyServid
     });
     
     chatPanel.add(scroll, BorderLayout.CENTER);
-    chatPanel.add(chatInput, BorderLayout.SOUTH);
+   JPanel inputPanel = new JPanel(new BorderLayout());
 
+    inputPanel.add(chatInput, BorderLayout.CENTER);
+
+    JPanel botonesSiNo = new JPanel(new FlowLayout());
+    JButton btnSi = new JButton("Sí");
+    JButton btnNo = new JButton("No");
+
+    btnSi.addActionListener(e -> {
+        if (chat != null) {
+            chatArea.append("Tú: Sí\n");
+            chat.enviarMensaje("Sí");
+        }
+    });
+
+    btnNo.addActionListener(e -> {
+        if (chat != null) {
+            chatArea.append("Tú: No\n");
+            chat.enviarMensaje("No");
+        }
+    });
+
+    botonesSiNo.add(btnSi);
+    botonesSiNo.add(btnNo);
+    inputPanel.add(botonesSiNo, BorderLayout.EAST);
+
+    chatPanel.add(inputPanel, BorderLayout.SOUTH);
     add(chatPanel);
-    
-
 
     for(Personaje p : this.tablero){
         // Escalar imagen a 64x64
@@ -199,13 +240,13 @@ public gameplay(List<Personaje> tableroCompartido, String ipp, boolean soyServid
                      chat.cerrar();
                      temporizador.stop(); 
                      this.duracion=segundosTranscurridos;
-                     new ganaste().setVisible(true); 
+                     new ganaste().setVisible(true); // Puedes pasar duración si quieres mostrarlo ahí
                      dispose();
-                    
+                    // Puedes terminar el juego aquí o mostrar otra ventana
                 } else {
                     JOptionPane.showMessageDialog(this, " Ese no es el personaje correcto.",
                         "Intenta de nuevo", JOptionPane.ERROR_MESSAGE);
-                    
+                    // Notificar al oponente que intentaron adivinar y fallaron
                     if (chat != null) {
                         chat.enviarMensaje("[FALLO]");
                     }
@@ -259,13 +300,13 @@ public gameplay(List<Personaje> tableroCompartido, String ipp, boolean soyServid
             Socket socket = server.accept();
             chatArea.append("Conectado con: " + socket.getInetAddress() + "\n");
             chat = new ChatConexion(socket);
-            chat.enviarMensaje("[NOMBRE]:" + nombreJugador); // <--- 🔹 Aquí se envía el nombre
+            chat.enviarMensaje("[NOMBRE]:" + nombreJugador);
             setChat(chat); 
         } else {
             Socket socket = new Socket(ipp, 12345);
             chatArea.append("Conectado al servidor\n");
             chat = new ChatConexion(socket);
-            chat.enviarMensaje("[NOMBRE]:" + nombreJugador); // <--- 🔹 También aquí
+            chat.enviarMensaje("[NOMBRE]:" + nombreJugador);
             setChat(chat); 
         }
 
@@ -394,7 +435,7 @@ private void asignarPersonaje(Personaje p, JDialog dialogo) {
     Image img = p.getImagen().getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
     lblPersonajeElegido.setIcon(new ImageIcon(img));
     lblPersonajeElegido.setText(p.getNombre());
-    JOptionPane.showMessageDialog(dialogo, "Elegiste: " + p.getNombre());
+    //JOptionPane.showMessageDialog(dialogo, "Elegiste: " + p.getNombre());
     dialogo.dispose();
 
     if (chat != null) {
@@ -410,21 +451,21 @@ public void setChat(ChatConexion chat){
     // Cuando recibes el personaje del oponente
     chat.onPersonajeRecibido = (String nombrePersonaje) -> {
         this.personajeOponenteNombre = nombrePersonaje;
-        System.out.println("Personaje del oponente recibido: " + nombrePersonaje);
+        //System.out.println("Personaje del oponente recibido: " + nombrePersonaje);
     };
 
     // Cuando recibes el nombre del oponente
     chat.onNombreRecibido = (String nombreRecibido) -> {
         this.nombreOponente = nombreRecibido;
-        chat.setNombres(this.nombreJugador, nombreRecibido); // ✅ Aquí
-        System.out.println("Nombre del oponente: " + nombreRecibido);
+        chat.setNombres(this.nombreJugador, nombreRecibido); 
+       // System.out.println("Nombre del oponente: " + nombreRecibido);
     };
 
     //  Cuando el oponente gana y tú pierdes
     chat.setOnDerrota(() -> {
         temporizador.stop();
         this.duracion = segundosTranscurridos;
-        this.objetoAdivinado = this.personajeElegido; // <- el que te adivinaron
+        this.objetoAdivinado = this.personajeElegido; 
 
         if (chat != null) chat.cerrar();
 
@@ -432,15 +473,22 @@ public void setChat(ChatConexion chat){
             "El oponente adivinó tu personaje.\nDuración: " + duracion + " segundos.",
             "¡Perdiste!", JOptionPane.ERROR_MESSAGE);
 
-        //new VentanaPerdiste(duracion).setVisible(true);  // 👈 si tu clase `perdiste` lo permite
+        new VentanaPerdiste(duracion).setVisible(true);  
         dispose();
 
-        // Opcional: Regresar al menú
-        // new Menu().setVisible(true);
     });
 }
 
-    
+    private boolean audioClipReproduciendo(AudioManager audio) {
+    try {
+        java.lang.reflect.Field field = audio.getClass().getDeclaredField("clip");
+        field.setAccessible(true);
+        Clip clip = (Clip) field.get(audio);
+        return clip != null && clip.isRunning();
+    } catch (Exception e) {
+        return false;
+    }
+}
 
 
 
