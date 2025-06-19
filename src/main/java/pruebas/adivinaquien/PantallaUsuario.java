@@ -14,10 +14,10 @@ public class PantallaUsuario extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
 
-        // Fondo (puedes poner una imagen si lo deseas)
+
         JPanel fondo = new JPanel();
         fondo.setLayout(null);
-        fondo.setBackground(Color.DARK_GRAY); // Si no tienes imagen aún
+        fondo.setBackground(Color.DARK_GRAY);
         setContentPane(fondo);
 
         // Sombra
@@ -76,7 +76,7 @@ public class PantallaUsuario extends JFrame {
 
                 if (seleccion == 0) {
                     // Servidor
-                    new ServidorJuego(nombre); // asegúrate que esta clase tenga constructor
+                    new ServidorJuego(nombre); 
                     
                 } else if (seleccion == 1) {
                     // Cliente

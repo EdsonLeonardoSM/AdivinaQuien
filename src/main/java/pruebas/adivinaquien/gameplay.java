@@ -84,19 +84,19 @@ public gameplay(List<Personaje> tableroCompartido, String ipp, boolean soyServid
     initComponents(); 
     
     lblPersonajeElegido = new JLabel("Sin personaje");
-    lblPersonajeElegido.setBounds(720, 50, 250, 270); // Ajusta posición y tamaño si es necesario
+    lblPersonajeElegido.setBounds(720, 50, 250, 270); 
     lblPersonajeElegido.setHorizontalAlignment(SwingConstants.CENTER);
     lblPersonajeElegido.setVerticalAlignment(SwingConstants.BOTTOM);
     lblPersonajeElegido.setOpaque(true);
     lblPersonajeElegido.setBackground(Color.WHITE);
     lblPersonajeElegido.setBorder(BorderFactory.createTitledBorder("Tu personaje"));
-    add(lblPersonajeElegido); // <- IMPORTANTE: Añadirlo al JFrame
+    add(lblPersonajeElegido); 
 
 
    
     AudioManager audio = new AudioManager();
     audio.reproducirMusica("/audio/cancion.wav");
-      //esto es cuando cierras la ventana cierra la conexion pero peta      
+         
 
     lblTiempo = new JLabel("Tiempo: 0 s");
     lblTiempo.setBounds(700, 20, 200, 30);
@@ -110,23 +110,23 @@ public gameplay(List<Personaje> tableroCompartido, String ipp, boolean soyServid
     
     setTitle("Adivina Quién");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    setSize(1040, 680);//1040,
+    setSize(1040, 680);
     setLayout(null);
-    setLocationRelativeTo(null); // Centra la ventana en pantalla
+    setLocationRelativeTo(null);
     setResizable(!true);
     
 
     // Medidas del panel
-    int panelWidth = (int)(1040 * 5.0 / 8);  // 600
-    int panelHeight = (int)(580); // 375
-    int panelX = 20;                        // Separado 20 px del borde izquierdo
-    int panelY = (680 - panelHeight) / 2;   // Centrado verticalmente
+    int panelWidth = (int)(1040 * 5.0 / 8); 
+    int panelHeight = (int)(580); 
+    int panelX = 20;                       
+    int panelY = (680 - panelHeight) / 2;  
 
     jPanel2 = new JPanel();
-    jPanel2.setLayout(new GridLayout(4, 6, 15, 15)); // Espaciado entre botones
+    jPanel2.setLayout(new GridLayout(4, 6, 15, 15)); 
     jPanel2.setBackground(Color.DARK_GRAY);
     jPanel2.setBounds(panelX, panelY, panelWidth, panelHeight);
-    jPanel2.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Borde interno
+    jPanel2.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); 
 
     add(jPanel2);
     //panel lateral chat
@@ -199,13 +199,13 @@ public gameplay(List<Personaje> tableroCompartido, String ipp, boolean soyServid
                      chat.cerrar();
                      temporizador.stop(); 
                      this.duracion=segundosTranscurridos;
-                     new ganaste().setVisible(true); // Puedes pasar duración si quieres mostrarlo ahí
+                     new ganaste().setVisible(true); 
                      dispose();
-                    // Puedes terminar el juego aquí o mostrar otra ventana
+                    
                 } else {
                     JOptionPane.showMessageDialog(this, " Ese no es el personaje correcto.",
                         "Intenta de nuevo", JOptionPane.ERROR_MESSAGE);
-                    // Notificar al oponente que intentaron adivinar y fallaron
+                    
                     if (chat != null) {
                         chat.enviarMensaje("[FALLO]");
                     }
@@ -281,7 +281,7 @@ public gameplay(List<Personaje> tableroCompartido, String ipp, boolean soyServid
 
         
 private void elegirPersonaje() {
-    // Preguntar formato: Lista o Cuadrícula
+    
     Object[] opciones = {"Modo Lista ", "Modo Cuadrícula "};
     int eleccion = JOptionPane.showOptionDialog(this, 
         "¿Cómo deseas ver los personajes?", 
@@ -291,9 +291,9 @@ private void elegirPersonaje() {
         null, opciones, opciones[0]);
 
     if (eleccion == 0) {
-        mostrarSeleccionLista();     // 🟩 Modo lista
+        mostrarSeleccionLista();     //Modo lista
     } else {
-        mostrarSeleccionCuadricula(); // 🟦 Modo cuadrícula
+        mostrarSeleccionCuadricula(); //Modo cuadrícula
     }
 }
 private void mostrarSeleccionCuadricula() {
@@ -327,7 +327,7 @@ private void mostrarSeleccionCuadricula() {
     btnAleatorio.setFont(new Font("Arial", Font.BOLD, 14));
     btnAleatorio.setBackground(Color.YELLOW);
     btnAleatorio.setFocusPainted(false);
-    btnAleatorio.setPreferredSize(new Dimension(0, 50)); // Altura fija
+    btnAleatorio.setPreferredSize(new Dimension(0, 50)); 
 
     btnAleatorio.addActionListener(e -> {
         Personaje aleatorio = tablero.get((int)(Math.random() * tablero.size()));
@@ -432,7 +432,7 @@ public void setChat(ChatConexion chat){
             "El oponente adivinó tu personaje.\nDuración: " + duracion + " segundos.",
             "¡Perdiste!", JOptionPane.ERROR_MESSAGE);
 
-        //new perdiste(duracion).setVisible(true);  // 👈 si tu clase `perdiste` lo permite
+        //new VentanaPerdiste(duracion).setVisible(true);  // 👈 si tu clase `perdiste` lo permite
         dispose();
 
         // Opcional: Regresar al menú
@@ -443,11 +443,7 @@ public void setChat(ChatConexion chat){
     
 
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
