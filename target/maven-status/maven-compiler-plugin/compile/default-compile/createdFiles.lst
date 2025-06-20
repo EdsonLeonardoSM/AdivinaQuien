@@ -1,5 +1,7 @@
 misClases\ClienteJuego.class
 misClases\Personaje.class
+pruebas\adivinaquien\TablaPartidas.class
+pruebas\adivinaquien\conexXxion.class
 pruebas\adivinaquien\primeraVentana$1.class
 pruebas\adivinaquien\gameplay.class
 misClases\ServidorJuego.class
@@ -9,16 +11,15 @@ pruebas\adivinaquien\instrucciones.class
 misClases\ChatConexion.class
 misClases\GeneradorPersonajes.class
 pruebas\adivinaquien\pantallaDeCarga.class
-misClases\GestorPartidas.class
 misClases\AudioManager.class
 pruebas\adivinaquien\primeraVentana.class
-misClases\TablaPartidas.class
+pruebas\adivinaquien\GestorPartidas.class
 pruebas\adivinaquien\primeraVentana$2.class
 pruebas\adivinaquien\VentanaPerdiste.class
 pruebas\adivinaquien\PantallaUsuario.class
 pruebas\adivinaquien\creditos$1.class
 pruebas\adivinaquien\gameplay$1.class
 pruebas\adivinaquien\menuPrueba.class
+pruebas\adivinaquien\Partida.class
 pruebas\adivinaquien\AdivinaQuien.class
 pruebas\adivinaquien\ganaste.class
-misClases\conexXxion.class

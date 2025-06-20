@@ -256,18 +256,13 @@ public gameplay(List<Personaje> tableroCompartido, String ipp, boolean soyServid
                     duracionTime,
                      objetoAdivinado.getNombre()
                     );
-
-                    
-                    
-                    
-                    
-                    
+               
                     new ganaste().setVisible(true);
+                    dispose();
                      chat.cerrar();
                      temporizador.stop(); 
                      this.duracion=segundosTranscurridos;
-                     new ganaste().setVisible(true); // Puedes pasar duración si quieres mostrarlo ahí
-                     dispose();
+
                     // Puedes terminar el juego aquí o mostrar otra ventana
                 } else {
                     JOptionPane.showMessageDialog(this, " Ese no es el personaje correcto.",

@@ -24,7 +24,7 @@ public class ganaste extends JFrame{
         
         //texto de ganaste asi bien perro
         JLabel titulo = new JLabel("FELICIDADES PAPITO");
-        titulo.setFont(new Font("Old English Text MT", Font.BOLD, 77));
+        titulo.setFont(new Font("Old English Text MT", Font.BOLD, 30));
         titulo.setForeground(Color.YELLOW);
         titulo.setBounds(150,50,700,60);
         titulo.setHorizontalAlignment(SwingConstants.CENTER);

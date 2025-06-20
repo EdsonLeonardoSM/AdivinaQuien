@@ -69,15 +69,17 @@ public class ChatConexion {
                         continue;
                     }
 
-                    if (msg.equals("[GANASTE]")) {
+                    if (msg.startsWith("[GANASTE]")) {
+                        String personaje = msg.substring(9); // Obtener el nombre (opcional)
                         JOptionPane.showMessageDialog(null, 
-                            "El oponente adivinó tu personaje. ¡Perdiste!",
+                            "El oponente adivinó tu personaje: " + personaje + "\n¡Perdiste!",
                             "Derrota", JOptionPane.ERROR_MESSAGE);
                         if (onDerrota != null) {
                             onDerrota.run(); // Detiene el timer o lo que tú definas
                         }
                         continue;
                     }
+
 
                     areaMensajes.append(nombreRemoto + ": " + msg + "\n");                
                 }
