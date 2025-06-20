@@ -1,5 +1,5 @@
 
-package misClases;
+package pruebas.adivinaquien;
 
 /**
  *
@@ -13,7 +13,7 @@ import java.sql.SQLException;
 public class conexXxion {
     private static final String URL = "jdbc:mysql://localhost:3306/juego";
     private static final String USER = "root";
-    private static final String PASSWORD = " "; // Reemplaza esto
+    private static final String PASSWORD = "";
 
     public static Connection conectar() {
         try {

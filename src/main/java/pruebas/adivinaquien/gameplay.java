@@ -22,6 +22,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import javax.sound.sampled.Clip;
 import javax.swing.BorderFactory;
@@ -69,9 +71,10 @@ public class gameplay extends javax.swing.JFrame {
     private String nombreJugador;
     private String nombreOponente;
     private int duracion;
+    private String ganador;
 
 public gameplay(List<Personaje> tableroCompartido, String ipp, boolean soyServidor,String nombreJugador) {
-    this.tablero = tablero;
+
     this.nombreJugador = nombreJugador;
     this.soyServidor = soyServidor;
     this.tablero = tableroCompartido;
@@ -219,23 +222,46 @@ public gameplay(List<Personaje> tableroCompartido, String ipp, boolean soyServid
         btnAdivinar.setForeground(Color.WHITE);
         btnAdivinar.setFont(new Font("Arial", Font.PLAIN, 9));
         btnAdivinar.addActionListener(e -> {
-                if (personajeOponenteNombre == null) {
-                    JOptionPane.showMessageDialog(this, 
-                        "Aún no se ha recibido el personaje del oponente.",
-                        "Espera", JOptionPane.WARNING_MESSAGE);
-                    return;
+            if (personajeOponenteNombre == null) {
+                JOptionPane.showMessageDialog(this, 
+                "Aún no se ha recibido el personaje del oponente.",
+                "Espera", JOptionPane.WARNING_MESSAGE);
+                return;
                 }
 
-                String personajeSeleccionado = p.getNombre(); // El nombre que el jugador intenta adivinar
+            String personajeSeleccionado = p.getNombre(); // El nombre que el jugador intenta adivinar
 
-                if (personajeSeleccionado.equals(personajeOponenteNombre)) {
-                     objetoAdivinado = p;  
-                    JOptionPane.showMessageDialog(this, " ¡Adivinaste el personaje del oponente!",
-                        "¡Victoria!", JOptionPane.INFORMATION_MESSAGE);
-                    // Notificar al oponente que perdió
-                    if (chat != null) {
-                        chat.enviarMensaje("[GANASTE]");
+            if (personajeSeleccionado.equals(personajeOponenteNombre)) {
+                objetoAdivinado = p;  
+                ganador = nombreJugador;
+                JOptionPane.showMessageDialog(this, " ¡Adivinaste el personaje del oponente!",
+                    "¡Victoria!", JOptionPane.INFORMATION_MESSAGE);
+                
+                // Notificar al oponente que perdió
+                if (chat != null) {
+                    chat.enviarMensaje("[GANASTE]" + objetoAdivinado.getNombre());
                     }
+                    
+                    // Datos para la base
+                LocalDateTime fecha = LocalDateTime.now();
+                LocalTime duracionTime = LocalTime.ofSecondOfDay(duracion);
+
+                // Guardar en la base de datos
+                GestorPartidas gestor = new GestorPartidas();
+                gestor.guardarPartida(
+                    nombreJugador,
+                    nombreOponente,
+                    ganador,
+                    fecha,
+                    duracionTime,
+                     objetoAdivinado.getNombre()
+                    );
+
+                    
+                    
+                    
+                    
+                    
                     new ganaste().setVisible(true);
                      chat.cerrar();
                      temporizador.stop(); 

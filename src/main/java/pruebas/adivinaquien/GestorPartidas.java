@@ -1,11 +1,12 @@
 
-package misClases;
+package pruebas.adivinaquien;
 
 /**
  *
  * @author Alonso
  */
 
+import pruebas.adivinaquien.conexXxion;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

@@ -9,8 +9,10 @@ pruebas\adivinaquien\instrucciones.class
 misClases\ChatConexion.class
 misClases\GeneradorPersonajes.class
 pruebas\adivinaquien\pantallaDeCarga.class
+misClases\GestorPartidas.class
 misClases\AudioManager.class
 pruebas\adivinaquien\primeraVentana.class
+misClases\TablaPartidas.class
 pruebas\adivinaquien\primeraVentana$2.class
 pruebas\adivinaquien\VentanaPerdiste.class
 pruebas\adivinaquien\PantallaUsuario.class
