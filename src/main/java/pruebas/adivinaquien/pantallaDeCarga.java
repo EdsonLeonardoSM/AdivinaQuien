@@ -28,7 +28,7 @@ public class pantallaDeCarga extends JFrame{
         panelCentral.setOpaque(false);
         
         //gif
-        JLabel giftLabel = new JLabel(new ImageIcon("/fondos/fondo3.jpg"));
+        JLabel giftLabel = new JLabel(new ImageIcon("/fondos/ratabailando.jpg"));
         panelCentral.add(giftLabel);
         
         //btn pa tras
@@ -49,6 +49,10 @@ public class pantallaDeCarga extends JFrame{
         fondo.add(panelBoton, BorderLayout.SOUTH);
         
         setVisible(true);
+    }
+    
+    public static void main(String[] args) {
+        new pantallaDeCarga("Jugador1").setVisible(true);
     }
     
 }

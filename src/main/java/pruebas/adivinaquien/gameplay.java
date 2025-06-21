@@ -244,8 +244,8 @@ public gameplay(List<Personaje> tableroCompartido, String ipp, boolean soyServid
                     
                     // Datos para la base
                 LocalDateTime fecha = LocalDateTime.now();
-                LocalTime duracionTime = LocalTime.ofSecondOfDay(duracion);
-
+                LocalTime duracionTime = LocalTime.ofSecondOfDay(segundosTranscurridos);
+                this.duracion = segundosTranscurridos;
                 // Guardar en la base de datos
                 GestorPartidas gestor = new GestorPartidas();
                 gestor.guardarPartida(
@@ -256,13 +256,12 @@ public gameplay(List<Personaje> tableroCompartido, String ipp, boolean soyServid
                     duracionTime,
                      objetoAdivinado.getNombre()
                     );
-               
+
                     new ganaste().setVisible(true);
-                    dispose();
                      chat.cerrar();
                      temporizador.stop(); 
                      this.duracion=segundosTranscurridos;
-
+                     dispose();
                     // Puedes terminar el juego aquí o mostrar otra ventana
                 } else {
                     JOptionPane.showMessageDialog(this, " Ese no es el personaje correcto.",
