@@ -265,9 +265,6 @@ public gameplay(List<Personaje> tableroCompartido, String ipp, boolean soyServid
                 new resumenVictoria(nombreJugador, nombreOponente, ganador, objetoAdivinado.getNombre(), String.format("%02d:%02d", segundosTranscurridos/60, segundosTranscurridos%60)
                 ).setVisible(true);
                 
-                
-                //te amo gina :)
-                
                 //new ganaste().setVisible(true);
                 chat.cerrar();
                 temporizador.stop(); 
