@@ -6,7 +6,9 @@ import misClases.ClienteJuego;
 import misClases.ServidorJuego;
 
 public class PantallaUsuario extends JFrame {
-
+    public ServidorJuego hola;
+    public ClienteJuego hola2;
+    
     public PantallaUsuario() {
         setTitle("Pantalla de Jugador");
         setSize(960, 600);
@@ -73,14 +75,15 @@ public class PantallaUsuario extends JFrame {
                     opciones,
                     opciones[0]
                 );
-
+                hola=null;
+                hola2=null;
                 if (seleccion == 0) {
                     // Servidor
-                    new ServidorJuego(nombre); 
+                   hola= new ServidorJuego(nombre); 
                     
                 } else if (seleccion == 1) {
                     // Cliente
-                    new ClienteJuego(nombre);
+                   hola2= new ClienteJuego(nombre);
 
                 }
 

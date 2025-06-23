@@ -1,8 +1,9 @@
 package pruebas.adivinaquien;
 
-import pruebas.adivinaquien.conexXxion;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
@@ -13,73 +14,91 @@ public class TablaPartidas extends JFrame {
     private JTable tabla;
     private DefaultTableModel modelo;
     private JTextField txtJugador;
-    private JButton btnFiltrar, btnOrdenar;
-    private JPanel panelFiltros;
+    private JButton btnFiltrar, btnOrdenar, btnMenu;
 
     public TablaPartidas() {
-        setTitle("🌸 Historial de Partidas");
-        setSize(800, 500);
+        setTitle("Historial de Partidas");
+        setSize(900, 550);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+        getContentPane().setBackground(Color.DARK_GRAY);
 
-        // 🌸 Panel superior con filtros
-        panelFiltros = new JPanel();
-        panelFiltros.setBackground(new Color(255, 245, 245));
-        panelFiltros.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        // Panel superior de filtros
+        JPanel panelFiltros = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
+        panelFiltros.setBackground(Color.DARK_GRAY);
+        panelFiltros.setBorder(new EmptyBorder(10, 20, 10, 20));
+
+        JLabel lblBuscar = new JLabel("Buscar jugador:");
+        lblBuscar.setFont(new Font("Old English Text MT", Font.PLAIN, 20));
+        lblBuscar.setForeground(Color.WHITE);
+        panelFiltros.add(lblBuscar);
 
         txtJugador = new JTextField(15);
-        txtJugador.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        txtJugador.setToolTipText("Nombre del jugador");
-
-        btnFiltrar = crearBotonConEstilo("Filtrar por  nombre", "resources/iconos/filtro.png");
-        btnOrdenar = crearBotonConEstilo("Ordenar por duración", "resources/iconos/reloj.png");
-
-        panelFiltros.add(new JLabel("Buscar jugador:"));
+        txtJugador.setFont(new Font("Old English Text MT", Font.PLAIN, 18));
         panelFiltros.add(txtJugador);
+
+        btnFiltrar = crearBotonConEstilo("Filtrar Nombre");
+        btnOrdenar = crearBotonConEstilo("Ordenar Duracion");
+        btnMenu = crearBotonConEstilo("Menú");
+
         panelFiltros.add(btnFiltrar);
         panelFiltros.add(btnOrdenar);
+        panelFiltros.add(btnMenu);
         add(panelFiltros, BorderLayout.NORTH);
 
-        // 🌸 Tabla
+        // Tabla de datos
         modelo = new DefaultTableModel();
         tabla = new JTable(modelo);
         tabla.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        tabla.setRowHeight(24);
-        tabla.setBackground(new Color(255, 250, 255));
-        tabla.setGridColor(new Color(230, 200, 220));
+        tabla.setRowHeight(26);
+        tabla.setBackground(new Color(40, 40, 40));
+        tabla.setForeground(Color.WHITE);
+        tabla.setGridColor(Color.GRAY);
+        tabla.setShowVerticalLines(false);
+        tabla.setShowHorizontalLines(true);
 
-        JTableHeaderEstilizado();
+        JTableHeader header = tabla.getTableHeader();
+        header.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        header.setBackground(Color.BLACK);
+        header.setForeground(Color.YELLOW);
+
         JScrollPane scroll = new JScrollPane(tabla);
+        scroll.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         add(scroll, BorderLayout.CENTER);
 
         cargarDatos();
 
-        // 🧠 Acciones de los botones
+        // Acciones
         btnFiltrar.addActionListener(e -> filtrarPorJugador(txtJugador.getText().trim()));
         btnOrdenar.addActionListener(e -> ordenarPorDuracion());
+        btnMenu.addActionListener(e -> {
+            dispose();
+            new menuPrueba().setVisible(true);
+        });
     }
 
-    private void JTableHeaderEstilizado() {
-        tabla.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
-        tabla.getTableHeader().setBackground(new Color(248, 200, 220));  
-        tabla.getTableHeader().setForeground(Color.DARK_GRAY);
-    }
-
-    private JButton crearBotonConEstilo(String texto, String rutaIcono) {
+    private JButton crearBotonConEstilo(String texto) {
         JButton btn = new JButton(texto);
+        btn.setFont(new Font("Old English Text MT", Font.BOLD, 13));
+        btn.setBackground(Color.BLACK);
+        btn.setForeground(Color.WHITE);
         btn.setFocusPainted(false);
-        btn.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        btn.setBackground(new Color(255, 230, 240));
-        btn.setBorder(BorderFactory.createLineBorder(new Color(240, 180, 200), 2));
+        btn.setBorderPainted(false);
+        btn.setPreferredSize(new Dimension(140, 40));
 
-        try {
-            ImageIcon icono = new ImageIcon(rutaIcono);
-            Image img = icono.getImage().getScaledInstance(18, 18, Image.SCALE_SMOOTH);
-            btn.setIcon(new ImageIcon(img));
-        } catch (Exception e) {
-            System.out.println("No se pudo cargar icono: " + rutaIcono);
-        }
+        // Hover
+        btn.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent evt) {
+                btn.setBackground(new Color(50, 50, 50));
+                btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
+
+            public void mouseExited(MouseEvent evt) {
+                btn.setBackground(Color.BLACK);
+                btn.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
+        });
 
         return btn;
     }

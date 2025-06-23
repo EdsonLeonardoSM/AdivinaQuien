@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-public class GestorPartidas {
+public class GestorPartidas {//aqui mandamos a la tabla
 
     public void guardarPartida(String jugador1, String jugador2, String ganador,
                                LocalDateTime fecha, LocalTime duracion, String objetoGanador) {

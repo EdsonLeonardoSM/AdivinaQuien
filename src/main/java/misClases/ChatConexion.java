@@ -19,8 +19,8 @@ public class ChatConexion {
     private PrintWriter salida;
     public Consumer<String> onPersonajeRecibido;
     public Consumer<String> onNombreRecibido; // ✅ NUEVO
-    private String nombreLocal = "Tú";
-    private String nombreRemoto = "Otro";
+    private String nombreLocal = "Yo";
+    private String nombreRemoto = "Oponente";
     private Runnable onDerrota;
     
     public ChatConexion(Socket socket){
@@ -54,7 +54,7 @@ public class ChatConexion {
                         continue;
                     }
 
-                    if (msg.startsWith("[NOMBRE]:")) { // ✅ NUEVO
+                    if (msg.startsWith("[NOMBRE]:")) { 
                         String nombre = msg.substring(9);
                         if (onNombreRecibido != null) {
                             onNombreRecibido.accept(nombre);
@@ -64,17 +64,14 @@ public class ChatConexion {
 
                     if (msg.equals("[FALLO]")) {
                         JOptionPane.showMessageDialog(null, 
-                            "️El oponente intentó adivinar tu personaje pero falló.",
-                            "¡A salvo!", JOptionPane.WARNING_MESSAGE);
+                            "️El oponente falló al intentar adivinar.",
+                            "", JOptionPane.WARNING_MESSAGE);
                         continue;
                     }
-
-                    if (msg.equals("[GANASTE]")) {
-                        JOptionPane.showMessageDialog(null, 
-                            "El oponente adivinó tu personaje. ¡Perdiste!",
-                            "Derrota", JOptionPane.ERROR_MESSAGE);
+                    if (msg.startsWith("[GANASTE]")) {
+                        String personaje = msg.substring(9); 
                         if (onDerrota != null) {
-                            onDerrota.run(); // Detiene el timer o lo que tú definas
+                            onDerrota.run(); // Detiene el timer
                         }
                         continue;
                     }

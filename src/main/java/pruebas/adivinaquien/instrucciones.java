@@ -1,77 +1,79 @@
+
 package pruebas.adivinaquien;
 
 import javax.swing.*;
 import java.awt.*;
-/**
- *
- * @author Alonso
- */
+
 public class instrucciones extends JFrame {
-    
-    public instrucciones(){
-        setTitle("instrucciones par gente rara");
+
+    public instrucciones() {
+        setTitle("Instrucciones del Juego");
         setSize(960, 600);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setResizable(false);
-        
-        //imagen
-        ImageIcon fondoImg = new ImageIcon(getClass().getResource("/fondos/fondo1.jpg"));
+
+        // Fondo con imagen
+        ImageIcon fondoImg = new ImageIcon(getClass().getResource("/fondos/fondo2.jpg"));
         JLabel fondo = new JLabel(fondoImg);
-        fondo.setLayout(new BorderLayout());
+        fondo.setLayout(null);
         setContentPane(fondo);
         
-        //panel transparente
-        JPanel panelContenido = new JPanel(new BorderLayout());
-        panelContenido.setOpaque(false);
+        JPanel panelCentral = new JPanel();
+        panelCentral.setOpaque(false);
+        panelCentral.setLayout(new BorderLayout());
+        panelCentral.setBounds(150, 100, 660, 350);
+        fondo.add(panelCentral);
+
+        // Texto de instrucciones
+        JTextArea instrucciones = new JTextArea(
+            "1. El objetivo es adivinar el objeto secreto del otro jugador con preguntas de si y no.\n" +
+            "2. Escribe por el chat las preguntas que tu prefieras.\n" +
+            "3. Una pregunta por turno.\n" +
+            "4. Despues de cada pregunta puedes intentar adivinar\n\n" +
+            "5. Tambien puedes ir descartando opciones\n\n" +
+            "💥 ¡BUENA SUERTE, NENE! 💥"
+        );
+        instrucciones.setFont(new Font("Old English Text MT", Font.PLAIN, 28));
+        instrucciones.setOpaque(false);
+        instrucciones.setForeground(Color.pink);
+        instrucciones.setEditable(false);
+        instrucciones.setHighlighter(null);
+        instrucciones.setLineWrap(true);
+        instrucciones.setWrapStyleWord(true);
+        instrucciones.setAlignmentX(Component.CENTER_ALIGNMENT);
+        instrucciones.setAlignmentY(Component.CENTER_ALIGNMENT);
+        instrucciones.setBorder(null);
+        instrucciones.setFocusable(false);
+        instrucciones.setMargin(new Insets(20,20,20,20));
+        instrucciones.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         
-        JPanel fondoTexto = new JPanel(new BorderLayout());
-        fondoTexto.setBackground(new Color(0, 0, 0, 150));
-        fondoTexto.setBorder(BorderFactory.createEmptyBorder(30,50,30,50));
+        JLabel textoC = new JLabel(
+            "<html><div style = 'text-align: center; font-family: Old English Text MT; font-size: 24px; color: pink;'>" +
+                instrucciones.getText().replaceAll("\n", "<br>") + 
+                    "</div></html>"
+                    );
+        textoC.setHorizontalAlignment(SwingConstants.CENTER);
+        panelCentral.add(textoC, BorderLayout.CENTER);
         
-        //texto
-        JTextArea area = new JTextArea(
-            "INSTRUCCIONES: \n\n" + 
-            "1. el objetivo es adivinar objeto secreto del otro jugador \n" +
-            "2. escribe por el chat lo que creas que es \n" +
-            "3. hazlo antes que tu rival \n" +
-            "4. gana el primero que acierte el objeto del otro \n \n" + 
-            "BUENA SUERTE NENE");
-        
-        area.setFont(new Font("Old English Text MT",Font.PLAIN, 38));
-        area.setEditable(false);
-        area.setOpaque(true);
-        area.setForeground(Color.PINK);
-        area.setLineWrap(true);
-        area.setWrapStyleWord(true);
-        
-        
-        JScrollPane scroll = new JScrollPane(area);
-        scroll.setOpaque(false);
-        scroll.getViewport().setOpaque(true);
-        scroll.setBorder(null);
-        
-        fondoTexto.add(scroll, BorderLayout.CENTER);
-        
-        
-        //boton
-        JButton regresarbtn = new JButton("echarse pa tras");
-        regresarbtn.setFont(new Font("Old English Text MT",Font.BOLD, 18));
-        regresarbtn.setPreferredSize(new Dimension(150,40));
-        regresarbtn.addActionListener(e -> dispose());
-        
-        JPanel panelbtn = new JPanel();
-        panelbtn.setOpaque(false);
-        panelbtn.add(regresarbtn);
-        
-        panelContenido.add(fondoTexto, BorderLayout.CENTER);
-        panelContenido.add(panelbtn, BorderLayout.SOUTH);
-        fondo.add(panelContenido, BorderLayout.CENTER);
-        
+
+        // Botón cerrar
+        JButton btnCerrar = new JButton("¡A jugar!");
+        btnCerrar.setFont(new Font("Old English Text MT", Font.BOLD, 24));
+        btnCerrar.setBackground(Color.BLACK);
+        btnCerrar.setForeground(Color.GREEN);
+        btnCerrar.setFocusPainted(false);
+        btnCerrar.setBounds(380, 480, 200, 50);
+        fondo.add(btnCerrar);
+
+        btnCerrar.addActionListener(e -> {
+            dispose();
+            new menuPrueba().setVisible(true);
+        });
+
         setVisible(true);
-        
-        
     }
+
     public static void main(String[] args) {
         new instrucciones();
     }

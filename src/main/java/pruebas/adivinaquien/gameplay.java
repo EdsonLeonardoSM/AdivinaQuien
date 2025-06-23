@@ -1,4 +1,4 @@
-/*
+ /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
@@ -45,8 +45,10 @@ import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import misClases.AudioManager;
 import misClases.ChatConexion;
+import misClases.ClienteJuego;
 import misClases.GeneradorPersonajes;
 import misClases.Personaje;
+import misClases.ServidorJuego;
 
 /**
  *
@@ -72,7 +74,7 @@ public class gameplay extends javax.swing.JFrame {
     private String nombreOponente;
     private int duracion;
     private String ganador;
-
+    public AudioManager audio;
 public gameplay(List<Personaje> tableroCompartido, String ipp, boolean soyServidor,String nombreJugador) {
 
     this.nombreJugador = nombreJugador;
@@ -82,6 +84,11 @@ public gameplay(List<Personaje> tableroCompartido, String ipp, boolean soyServid
     
     
     initComponents(); 
+    JLabel titulo = new JLabel("Adivina Quién", SwingConstants.CENTER);
+    titulo.setFont(new Font("Arial", Font.BOLD, 26));
+    titulo.setForeground(Color.BLACK);
+    titulo.setBounds(0, 0, 1040, 40);  // Ocupará todo el ancho
+    add(titulo);
     
     lblPersonajeElegido = new JLabel("Sin personaje");
     lblPersonajeElegido.setBounds(720, 50, 250, 270); 
@@ -94,10 +101,15 @@ public gameplay(List<Personaje> tableroCompartido, String ipp, boolean soyServid
 
 
    
-    AudioManager audio = new AudioManager();
+    audio = new AudioManager();
     audio.reproducirMusica("/audio/cancion.wav");
-
-        JButton btnMusica = new JButton("⏸ Música");
+    
+    JLabel lblFecha = new JLabel("Fecha: " + java.time.LocalDate.now());
+    lblFecha.setBounds(800, 20, 200, 30);
+    lblFecha.setFont(new Font("Arial", Font.PLAIN, 13));
+    add(lblFecha);
+    
+    JButton btnMusica = new JButton("⏸ Música");
     btnMusica.setBounds(20, 20, 120, 30); // Ajusta posición y tamaño como desees
     btnMusica.setFocusPainted(false);
 
@@ -129,6 +141,7 @@ public gameplay(List<Personaje> tableroCompartido, String ipp, boolean soyServid
     setLayout(null);
     setLocationRelativeTo(null);
     setResizable(!true);
+    setBackground(Color.DARK_GRAY);
     
 
     // Medidas del panel
@@ -241,11 +254,11 @@ public gameplay(List<Personaje> tableroCompartido, String ipp, boolean soyServid
                 if (chat != null) {
                     chat.enviarMensaje("[GANASTE]" + objetoAdivinado.getNombre());
                     }
-                    
-                    // Datos para la base
-                LocalDateTime fecha = LocalDateTime.now();
-                LocalTime duracionTime = LocalTime.ofSecondOfDay(duracion);
 
+                LocalDateTime fecha = LocalDateTime.now();
+                LocalTime duracionTime = LocalTime.ofSecondOfDay(segundosTranscurridos);
+                this.duracion = segundosTranscurridos;
+                if(soyServidor){
                 // Guardar en la base de datos
                 GestorPartidas gestor = new GestorPartidas();
                 gestor.guardarPartida(
@@ -254,21 +267,22 @@ public gameplay(List<Personaje> tableroCompartido, String ipp, boolean soyServid
                     ganador,
                     fecha,
                     duracionTime,
-                     objetoAdivinado.getNombre()
+                    objetoAdivinado.getNombre()
                     );
+                }
+                int minutos = segundosTranscurridos/60;
+                int segundos = segundosTranscurridos%60;
+                String tiempoFormateado = String.format("%02d:%02d", minutos, segundos);
+                
 
-                    
-                    
-                    
-                    
-                    
-                    new ganaste().setVisible(true);
-                     chat.cerrar();
-                     temporizador.stop(); 
-                     this.duracion=segundosTranscurridos;
-                     new ganaste().setVisible(true); // Puedes pasar duración si quieres mostrarlo ahí
-                     dispose();
-                    // Puedes terminar el juego aquí o mostrar otra ventana
+                new resumenVictoria(nombreJugador, this.nombreOponente, ganador, objetoAdivinado.getNombre(), String.format("%02d:%02d", segundosTranscurridos/60, segundosTranscurridos%60)
+                ).setVisible(true);
+                audio.detenerMusica();
+                chat.cerrar();
+                temporizador.stop(); 
+                this.duracion=segundosTranscurridos;
+                finalizarJuego();
+                
                 } else {
                     JOptionPane.showMessageDialog(this, " Ese no es el personaje correcto.",
                         "Intenta de nuevo", JOptionPane.ERROR_MESSAGE);
@@ -321,19 +335,21 @@ public gameplay(List<Personaje> tableroCompartido, String ipp, boolean soyServid
     }   
     try {
         if (soyServidor) {
-            ServerSocket server = new ServerSocket(12345);
+            ServerSocket server= null;
+            server = new ServerSocket(12345);
             chatArea.append("Esperando conexión...\n");
             Socket socket = server.accept();
             chatArea.append("Conectado con: " + socket.getInetAddress() + "\n");
             chat = new ChatConexion(socket);
+            setChat(chat);             
             chat.enviarMensaje("[NOMBRE]:" + nombreJugador);
-            setChat(chat); 
         } else {
-            Socket socket = new Socket(ipp, 12345);
+            Socket socket=null;
+            socket = new Socket(ipp, 12345);
             chatArea.append("Conectado al servidor\n");
             chat = new ChatConexion(socket);
-            chat.enviarMensaje("[NOMBRE]:" + nombreJugador);
             setChat(chat); 
+            chat.enviarMensaje("[NOMBRE]:" + nombreJugador); 
         }
 
         chat.recibirMensajes(chatArea);
@@ -477,33 +493,43 @@ public void setChat(ChatConexion chat){
     // Cuando recibes el personaje del oponente
     chat.onPersonajeRecibido = (String nombrePersonaje) -> {
         this.personajeOponenteNombre = nombrePersonaje;
-        //System.out.println("Personaje del oponente recibido: " + nombrePersonaje);
     };
 
     // Cuando recibes el nombre del oponente
     chat.onNombreRecibido = (String nombreRecibido) -> {
         this.nombreOponente = nombreRecibido;
         chat.setNombres(this.nombreJugador, nombreRecibido); 
-       // System.out.println("Nombre del oponente: " + nombreRecibido);
     };
 
     //  Cuando el oponente gana y tú pierdes
     chat.setOnDerrota(() -> {
+        
         temporizador.stop();
         this.duracion = segundosTranscurridos;
         this.objetoAdivinado = this.personajeElegido; 
-
+        audio.detenerMusica();
         if (chat != null) chat.cerrar();
-
+        
+        LocalDateTime fecha = LocalDateTime.now();
+        LocalTime duracionTime = LocalTime.ofSecondOfDay(duracion);
+        String perdedor = nombreJugador;
+        String ganador = nombreOponente;
+        if(soyServidor){
+        GestorPartidas gestor = new GestorPartidas();
+        gestor.guardarPartida(perdedor, ganador, ganador, fecha, duracionTime, objetoAdivinado.getNombre());
+        }
+        String tiempoFormateado = String.format("%02d:%02d", duracion/60, duracion%60);
+        new resumenDerrota(perdedor, this.nombreOponente, objetoAdivinado.getNombre(), tiempoFormateado ).setVisible(true);
         JOptionPane.showMessageDialog(this,
-            "El oponente adivinó tu personaje.\nDuración: " + duracion + " segundos.",
+            "El oponente adivinó tu personaje",
             "¡Perdiste!", JOptionPane.ERROR_MESSAGE);
 
-        new VentanaPerdiste(duracion).setVisible(true);  
-        dispose();
+         finalizarJuego();
+        
 
     });
 }
+
 
     private boolean audioClipReproduciendo(AudioManager audio) {
     try {
@@ -516,7 +542,21 @@ public void setChat(ChatConexion chat){
     }
 }
 
+private void finalizarJuego() {
+    try {
+     
+     chat.cerrar();
+     
+    } catch (Exception e) {
+        System.err.println("Error cerrando chat: " + e.getMessage());
+    }
 
+    if (temporizador != null) temporizador.stop();
+    if (audio != null) audio.detenerMusica();
+
+    this.dispose();  // Cierra la ventana completamente
+    ServidorJuego.cerrar();
+} 
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -555,7 +595,6 @@ public void setChat(ChatConexion chat){
 public static void main(String[] args) {
     List<Personaje> tableroCompartido = GeneradorPersonajes.obtenerPersonajesAleatorios();
     new gameplay(tableroCompartido, "127.0.0.1", true,"Jose").setVisible(true);  // Jugador 1
-    // new gameplay(tableroCompartido, "127.0.0.1", false).setVisible(true); // Jugador 2
 }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

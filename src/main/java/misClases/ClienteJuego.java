@@ -7,6 +7,15 @@ import pruebas.adivinaquien.pantallaDeCarga;
 import pruebas.adivinaquien.gameplay;
 
 public class ClienteJuego {
+    private static Socket socket=null;
+    public static void cerrar(){
+        try{
+            socket.close();
+        }catch(Exception e){
+            
+        }
+        
+    }
 
     public ClienteJuego(String nombreJugador) {
         try {
@@ -17,7 +26,7 @@ public class ClienteJuego {
             pantalla.setVisible(true);
 
             // 2. Conectarse al servidor
-            Socket socket = new Socket(ip, 54321);
+            socket = new Socket(ip, 54321);
             System.out.println("Conectado al servidor");
 
             // 3. Recibir tablero del servidor

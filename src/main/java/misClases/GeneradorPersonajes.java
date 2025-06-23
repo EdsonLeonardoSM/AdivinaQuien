@@ -9,6 +9,16 @@ public class GeneradorPersonajes {
     public static List<Personaje> obtenerPersonajesAleatorios() {
     List<Personaje> todos = new ArrayList<>();
     todos.add(new Personaje("Cartel", "cartel.png"));
+    todos.add(new Personaje("Armorstand", "armorstand.png"));
+    todos.add(new Personaje("Ghast seco", "GhastSeco.png"));
+    todos.add(new Personaje("Montura", "montura.png"));
+    todos.add(new Personaje("Saco de tinta", "sacodetintabrillante.png"));
+    todos.add(new Personaje("Skeleton skull", "skeletonskull.png"));
+    todos.add(new Personaje("Tierra", "tierra.png"));
+    todos.add(new Personaje("totem", "totem.png"));
+    todos.add(new Personaje("Tridente", "tridente.png"));
+    todos.add(new Personaje("Vision Nocturna", "visionnocturna.png"));
+    todos.add(new Personaje("Leche", "leche.png"));
     todos.add(new Personaje("Afilador", "afilador.png"));
     todos.add(new Personaje("Antorcha", "antorcha.png"));
     todos.add(new Personaje("Ballesta", "ballesta.png"));
